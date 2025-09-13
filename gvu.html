@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GVU Medical Records — Student</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root{--brand:#0b74d1;--muted:#6c757d}
+    body{font-family:Inter,system-ui,Arial;margin:0;padding-top:76px;background:linear-gradient(180deg,#eef8ff 0,#fff 70%)}
+    .logo{height:100px;width:100px;border-radius:8px;object-fit:cover}
+    .auth-card{max-width:520px;margin:28px auto;padding:22px;border-radius:12px;background:#fff;box-shadow:0 8px 30px rgba(2,12,34,.06)}
+    .panel{background:#fff;border-radius:12px;padding:16px;box-shadow:0 8px 24px rgba(2,12,34,.05)}
+    .prescription-badge{display:inline-block;margin:.15rem .2rem;padding:.28rem .5rem;border-radius:999px;background:#e9ecef;font-size:.85rem}
+    .tip-badge{background:#f0f9ff;border-left:4px solid var(--brand);padding:.75rem;border-radius:8px}
+    .small-muted{font-size:.88rem;color:var(--muted)}
+    .carousel-svg{width:100%;height:220px;object-fit:cover;border-radius:10px}
+    @media (max-width:767px){ .carousel-svg{height:160px} body{padding-top:90px} .logo{height:72px;width:72px} }
+    /* make navbar logo smaller on mobile */
+    .navbar .logo{ height:72px; width:72px; }
+    @media (max-width:576px){ .navbar .logo{height:56px;width:56px} }
+  </style>
+</head>
+<body>
+
+<nav class="navbar fixed-top navbar-expand-lg" style="background:linear-gradient(90deg,var(--brand),#0b94e0);">
+  <div class="container-fluid">
+    <div class="d-flex align-items-center gap-3">
+      <img id="navLogo" src="WhatsApp Image 2025-09-10 at 12.08.49_f0d52896.jpg" alt="Logo" class="logo" onerror="this.style.display='none'"/>
+      <div class="d-none d-sm-block text-white">
+        <div style="font-weight:700">GVU Medical Records</div>
+        <div style="font-size:.85rem;opacity:.95">Student Portal</div>
+      </div>
+    </div>
+    <div class="ms-auto me-3 d-flex align-items-center gap-2">
+      <div id="navUser" style="color:#fff;display:none;font-weight:600"></div>
+      <button id="btnLogout" class="btn btn-outline-light btn-sm" style="display:none">Logout</button>
+    </div>
+  </div>
+</nav>
+
+<!-- AUTH -->
+<div class="auth-card" id="authBox">
+  <div class="text-center mb-2">
+    <h4 style="margin-bottom:2px">Student Portal</h4>
+    <div class="small-muted">Register with your Matric number. Use DOB (YYYY-MM-DD) to login.</div>
+  </div>
+
+  <ul class="nav nav-pills nav-justified mb-3" role="tablist">
+    <li class="nav-item"><button class="nav-link active" data-bs-target="#loginTab" data-bs-toggle="pill" type="button">Login</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-target="#registerTab" data-bs-toggle="pill" type="button">Register</button></li>
+  </ul>
+
+  <div class="tab-content">
+    <!-- LOGIN -->
+    <div id="loginTab" class="tab-pane fade show active">
+      <div class="mb-2">
+        <label class="form-label small">Matric Number</label>
+        <input id="loginMatric" class="form-control" placeholder="GVU/2024/001" />
+      </div>
+      <div class="mb-2">
+        <label class="form-label small">Date of Birth (password)</label>
+        <input id="loginDob" type="date" class="form-control" />
+      </div>
+      <div class="d-grid gap-2 mt-2">
+        <button id="btnLogin" class="btn btn-primary">Login</button>
+        <button id="btnHelp" class="btn btn-link">Need help?</button>
+      </div>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="registerTab" class="tab-pane fade">
+      <div class="mb-2"><label class="form-label small">Matric Number</label><input id="regMatric" class="form-control" placeholder="GVU/2024/001"></div>
+      <div class="row g-2">
+        <div class="col-6"><label class="form-label small">First name</label><input id="regFirst" class="form-control"></div>
+        <div class="col-6"><label class="form-label small">Last name</label><input id="regLast" class="form-control"></div>
+      </div>
+      <div class="row g-2 mt-2">
+        <div class="col-md-6"><label class="form-label small">Date of Birth</label><input id="regDob" type="date" class="form-control"></div>
+        <div class="col-md-6"><label class="form-label small">Contact (optional)</label><input id="regContact" class="form-control"></div>
+      </div>
+      <div class="d-grid mt-3"><button id="btnRegister" class="btn btn-success">Create account</button></div>
+      <div class="small-muted mt-2">DOB will be used as your initial password (YYYY-MM-DD).</div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<main class="container mt-3" id="app" style="display:none;max-width:1100px">
+  <div class="row g-3">
+    <div class="col-lg-8">
+      <div class="panel mb-3">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h5 id="cardTitle">Welcome, <span id="studentName">Student</span></h5>
+            <div id="studentMeta" class="small-muted">GVU / Matric</div>
+          </div>
+          <div class="text-end">
+            <div class="small-muted">Total visits</div>
+            <div style="font-weight:700;font-size:1.25rem" id="totalVisits">0</div>
+            <div class="mt-2">
+              <button id="btnEdit" class="btn btn-outline-secondary btn-sm">Edit Profile</button>
+            </div>
+          </div>
+        </div>
+
+        <hr/>
+
+        <div id="homeCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <img class="d-block w-100 carousel-svg" src="data:image/svg+xml;utf8,
+                <svg xmlns='http://www.w3.org/2000/svg' width='1200' height='400'>
+                  <rect width='100%' height='100%' fill='%230b74d1'/>
+                  <text x='50%' y='45%' font-size='36' fill='white' text-anchor='middle' font-family='Arial'>Stay Hydrated — Drink Water</text>
+                  <text x='50%' y='60%' font-size='20' fill='white' text-anchor='middle' font-family='Arial'>Keep your body and mind sharp</text>
+                </svg>" alt="Slide 1">
+            </div>
+            <div class="carousel-item">
+              <img class="d-block w-100 carousel-svg" src="data:image/svg+xml;utf8,
+                <svg xmlns='http://www.w3.org/2000/svg' width='1200' height='400'>
+                  <rect width='100%' height='100%' fill='%2333a02c'/>
+                  <text x='50%' y='48%' font-size='34' fill='white' text-anchor='middle' font-family='Arial'>Move More — 30 min Exercise</text>
+                  <text x='50%' y='62%' font-size='18' fill='white' text-anchor='middle' font-family='Arial'>A short walk is a great start</text>
+                </svg>" alt="Slide 2">
+            </div>
+            <div class="carousel-item">
+              <img class="d-block w-100 carousel-svg" src="data:image/svg+xml;utf8,
+                <svg xmlns='http://www.w3.org/2000/svg' width='1200' height='400'>
+                  <rect width='100%' height='100%' fill='%23ff7f0e'/>
+                  <text x='50%' y='48%' font-size='34' fill='white' text-anchor='middle' font-family='Arial'>Healthy Eating Tips</text>
+                  <text x='50%' y='62%' font-size='18' fill='white' text-anchor='middle' font-family='Arial'>Fruit, veg, and whole grains</text>
+                </svg>" alt="Slide 3">
+            </div>
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#homeCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#homeCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+
+        <h6>Visit history</h6>
+        <div id="visitsList" class="mb-2"></div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="panel mb-3 text-center">
+        <img id="profileAvatar" src="data:image/svg+xml;utf8,
+          <svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><rect rx='16' width='100%' height='100%' fill='%23ffffff' stroke='%23000000' stroke-opacity='0.04'/><text x='50%' y='55%' font-size='28' text-anchor='middle' fill='%230b74d1' font-family='Arial'>GVU</text></svg>" style="width:96px;height:96px;border-radius:12px;margin-bottom:12px" alt="avatar">
+        <h5 id="cardName">Student Name</h5>
+        <div id="cardMatric" class="small-muted">GVU/XXXX/XXX</div>
+        <div class="mt-3">
+          <button id="btnViewPres" class="btn btn-sm btn-primary">View Prescriptions</button>
+        </div>
+      </div>
+
+      <div class="panel mb-3">
+        <h6>Health Tip</h6>
+        <div id="healthTip" class="tip-badge"></div>
+      </div>
+
+      <div class="panel">
+        <h6>Quick Summary</h6>
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="small-muted">Total visits</div>
+          <div id="summaryVisits" style="font-weight:700">0</div>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mt-2">
+          <div class="small-muted">Latest prescription</div>
+          <div id="summaryRx" class="small-muted">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Modal: prescriptions / visit detail -->
+<div class="modal fade" id="rxModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Details</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body" id="rxModalBody"></div>
+    </div>
+  </div>
+</div>
+<!-- Edit Profile Modal -->
+<div class="modal fade" id="editModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Profile</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Avatar preview + upload -->
+        <div class="text-center mb-2">
+          <img id="editAvatarPreview" src="" alt="avatar preview"
+            style="width:96px;height:96px;border-radius:12px;object-fit:cover;margin-bottom:8px" />
+        </div>
+        <div class="mb-2">
+          <label class="form-label small">Change profile photo</label>
+          <input id="editAvatarInput" type="file" accept="image/*"
+            class="form-control form-control-sm" />
+        </div>
+
+        <div class="mb-2"><label class="form-label small">First name</label><input id="editFirst" class="form-control"></div>
+        <div class="mb-2"><label class="form-label small">Last name</label><input id="editLast" class="form-control"></div>
+        <div class="mb-2"><label class="form-label small">Contact</label><input id="editContact" class="form-control"></div>
+
+        <!-- 🔥 New password -->
+        <div class="mb-2">
+          <label class="form-label small">New Password</label>
+          <div class="input-group">
+            <input id="editPassword" type="password" class="form-control"
+              placeholder="Leave blank to keep current password">
+            <button class="btn btn-outline-secondary" type="button" id="togglePassword">👁</button>
+          </div>
+        </div>
+
+        <!-- Confirm password -->
+        <div class="mb-3">
+          <label for="confirmPassword" class="form-label small">Confirm Password</label>
+          <input type="password" class="form-control" id="confirmPassword">
+        </div>
+
+        <div class="d-grid">
+          <button id="saveEdit" class="btn btn-primary">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<script>
+/*
+  Student portal connected to admin via localStorage keys:
+    - gvu_students: array of students {matric,first,last,dob,contact,visits:[],notes,createdAt, avatar}
+    - gvu_session_student: matric (string)
+  This file: USING YOUR ORIGINAL CODE, only added avatar upload & functional edit-save that persists avatar & profile.
+*/
+
+const STUD_KEY = 'gvu_students';
+const SESSION_KEY = 'gvu_session_student';
+
+function lsGet(k){ try { return JSON.parse(localStorage.getItem(k)||'null'); } catch { return null; } }
+function lsSet(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
+function ensureDefault(){ if(!lsGet(STUD_KEY)) lsSet(STUD_KEY, []); }
+ensureDefault();
+
+function getStudents(){ return lsGet(STUD_KEY) || []; }
+function saveStudents(a){ lsSet(STUD_KEY, a); }
+
+function findStudent(matric){ if(!matric) return null; return getStudents().find(s => (s.matric||'').toLowerCase() === matric.toLowerCase()); }
+
+const btnRegister = document.getElementById('btnRegister');
+const btnLogin = document.getElementById('btnLogin');
+const btnLogout = document.getElementById('btnLogout');
+
+btnRegister.addEventListener('click', ()=>{
+  const matric = document.getElementById('regMatric').value.trim();
+  const first = document.getElementById('regFirst').value.trim();
+  const last = document.getElementById('regLast').value.trim();
+  const dob = document.getElementById('regDob').value;
+  const contact = document.getElementById('regContact').value.trim();
+  if(!matric || !first || !last || !dob) return alert('Please fill required fields');
+  const arr = getStudents();
+  if(arr.find(x=>x.matric.toLowerCase()===matric.toLowerCase())) return alert('Matric already registered');
+  arr.push({matric,first,last,dob,contact,visits:[],notes:'',createdAt:new Date().toISOString(), avatar: null});
+  saveStudents(arr);
+  alert('Registered successfully. Login with Matric and DOB.');
+  // reset
+  document.getElementById('regMatric').value=''; document.getElementById('regFirst').value=''; document.getElementById('regLast').value=''; document.getElementById('regDob').value=''; document.getElementById('regContact').value='';
+  // switch to login tab
+  document.querySelector('[data-bs-target="#loginTab"]').click();
+});
+
+btnLogin.addEventListener('click', ()=>{
+  const matric = document.getElementById('loginMatric').value.trim();
+  const dob = document.getElementById('loginDob').value;
+  if(!matric || !dob) return alert('Enter matric and DOB');
+  const student = findStudent(matric);
+  if(!student || student.dob !== dob) return alert('Invalid credentials');
+  localStorage.setItem(SESSION_KEY, student.matric);
+  showAppFor(student);
+});
+
+btnLogout.addEventListener('click', ()=>{
+  localStorage.removeItem(SESSION_KEY);
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('authBox').style.display = '';
+  btnLogout.style.display='none';
+  document.getElementById('navUser').style.display='none';
+});
+
+function showAppFor(student){
+  document.getElementById('authBox').style.display='none';
+  document.getElementById('app').style.display='';
+  btnLogout.style.display='';
+  document.getElementById('navUser').style.display='';
+  document.getElementById('navUser').textContent = `${student.first} ${student.last}`;
+  renderStudent(student);
+}
+
+function renderStudent(s){
+  // name/meta
+  document.getElementById('studentName').textContent = s.first + ' ' + s.last;
+  document.getElementById('studentMeta').textContent = `${s.matric} • DOB: ${s.dob}${s.contact? ' • '+s.contact:''}`;
+  document.getElementById('cardName').textContent = s.first + ' ' + s.last;
+  document.getElementById('cardMatric').textContent = s.matric;
+
+  // avatar handling: override both profileAvatar and navLogo if avatar exists
+  const avatarEl = document.getElementById('profileAvatar');
+  const navLogoEl = document.getElementById('navLogo');
+  const defaultAvatar = avatarEl.getAttribute('data-default') || avatarEl.src;
+  if(s.avatar){
+    avatarEl.src = s.avatar;
+    // show nav logo if hidden and set src
+    try { if(navLogoEl) { navLogoEl.src = s.avatar; navLogoEl.style.display = ''; } } catch(e){}
+  } else {
+    // if no saved avatar, leave whatever navLogo already had (do not hide), set profile to default
+    avatarEl.src = defaultAvatar;
+  }
+
+  // visits / summary
+  const visits = s.visits || [];
+  document.getElementById('totalVisits').textContent = visits.length;
+  document.getElementById('summaryVisits').textContent = visits.length;
+  const latestRx = visits.length ? (visits[visits.length-1].prescriptions||[])[0] : null;
+  document.getElementById('summaryRx').textContent = latestRx ? latestRx.name : '—';
+
+  // visits list (unchanged from your code)
+  const visitsWrap = document.getElementById('visitsList');
+  if(!visits.length) visitsWrap.innerHTML = '<div class="text-muted">No visits recorded</div>';
+  else visitsWrap.innerHTML = visits.slice().reverse().map(v=>{
+    const pres = (v.prescriptions||[]).map(p=>`<span class="prescription-badge">${escapeHtml(p.name)}</span>`).join(' ');
+    return `<div class="card mb-2 p-2">
+      <div class="d-flex justify-content-between">
+        <div><strong>${escapeHtml(v.date||'')}</strong> <div class="small-muted">${escapeHtml(v.clinician||'')}</div></div>
+        <div><button class="btn btn-sm btn-outline-primary view-visit" data-m="${s.matric}" data-date="${escapeHtml(v.date||'')}">View</button></div>
+      </div>
+      <div class="mt-2"><em>${escapeHtml(v.diagnosis||'')}</em></div>
+      <div class="mt-2 small">${escapeHtml(v.notes||'')}</div>
+      ${pres? `<div class="mt-2">Prescriptions: ${pres}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  // bind view visit buttons - keep as in original code
+  setTimeout(()=>{ // slight timeout to ensure buttons are in DOM
+    document.querySelectorAll('.view-visit').forEach(b=>b.addEventListener('click', e=>{
+      const m = e.currentTarget.dataset.m;
+      const date = e.currentTarget.dataset.date;
+      openVisitModal(m,date);
+    }));
+  },50);
+
+  // random health tip (same as you had)
+  const tips = [
+    "Drink at least 8 glasses of water daily.",
+    "Sleep 7–8 hours each night.",
+    "Exercise at least 30 minutes every day.",
+    "Eat more fruits and vegetables.",
+    "Wash your hands regularly.",
+    "Avoid self-medication.",
+    "Take breaks from screens.",
+    "Maintain good posture.",
+    "Manage stress healthily.",
+    "Keep your vaccinations up to date."
+  ];
+  document.getElementById('healthTip').textContent = tips[Math.floor(Math.random()*tips.length)];
+}
+
+function openVisitModal(matric,date){
+  const s = findStudent(matric);
+  if(!s) return alert('No record');
+  const v = s.visits.find(x=>x.date===date);
+  if(!v) return alert('Visit not found');
+  const pres = (v.prescriptions||[]).map(p=>`<span class="prescription-badge">${escapeHtml(p.name)}</span>`).join(' ');
+  const html = `<div><strong>${escapeHtml(v.date)}</strong> — ${escapeHtml(v.clinician||'')}</div>
+    <div class="mt-2"><em>${escapeHtml(v.diagnosis||'')}</em></div>
+    <div class="mt-2 small">${escapeHtml(v.notes||'')}</div>
+    ${pres? '<hr><div>Prescriptions: '+pres+'</div>':''}`;
+  document.getElementById('rxModalBody').innerHTML = html;
+  new bootstrap.Modal(document.getElementById('rxModal')).show();
+}
+
+document.getElementById('btnViewPres').addEventListener('click', ()=>{
+  const m = localStorage.getItem(SESSION_KEY); if(!m) return alert('Not logged in');
+  const s = findStudent(m); if(!s) return;
+  const allPres = (s.visits||[]).flatMap(v=>v.prescriptions||[]);
+  if(!allPres.length){ document.getElementById('rxModalBody').innerHTML = '<div class="text-muted">No prescriptions</div>'; new bootstrap.Modal(document.getElementById('rxModal')).show(); return; }
+  document.getElementById('rxModalBody').innerHTML = allPres.map(p=>`<div class="border-bottom py-2"><strong>${escapeHtml(p.name)}</strong></div>`).join('');
+  new bootstrap.Modal(document.getElementById('rxModal')).show();
+});
+
+// EDIT PROFILE: open modal (prefill) + avatar preview + save
+const editModal = new bootstrap.Modal(document.getElementById('editModal'));
+document.getElementById('btnEdit').addEventListener('click', ()=>{
+  const m = localStorage.getItem(SESSION_KEY); const s = findStudent(m); if(!s) return;
+  document.getElementById('editFirst').value = s.first; document.getElementById('editLast').value = s.last; document.getElementById('editContact').value = s.contact || '';
+  // preview avatar if present
+  const preview = document.getElementById('editAvatarPreview');
+  preview.src = s.avatar || document.getElementById('profileAvatar').src || '';
+  // clear file input
+  document.getElementById('editAvatarInput').value = '';
+  editModal.show();
+});
+
+document.getElementById('saveEdit').addEventListener('click', ()=>{
+  const m = localStorage.getItem(SESSION_KEY); if(!m) return alert('Not logged in');
+  const arr = getStudents(); const i = arr.findIndex(x=>x.matric===m); if(i<0) return alert('Student not found');
+  const first = document.getElementById('editFirst').value.trim();
+  const last = document.getElementById('editLast').value.trim();
+  const contact = document.getElementById('editContact').value.trim();
+  const fileInput = document.getElementById('editAvatarInput');
+  const file = fileInput.files && fileInput.files[0];
+
+  // helper to finalize save (used both sync and async)
+  function finalizeSave(dataURL){
+  if(first) arr[i].first = first;
+  if(last) arr[i].last = last;
+  arr[i].contact = contact;
+
+  // ✅ Password change
+  const newPass = document.getElementById('editPassword').value.trim();
+  if(newPass) arr[i].dob = newPass;
+
+  if(dataURL) arr[i].avatar = dataURL;
+
+  saveStudents(arr);
+  editModal.hide();
+  // refresh UI for this student
+  showAppFor(arr[i]);
+
+  // clear fields
+  fileInput.value = '';
+  document.getElementById('editPassword').value = '';
+}
+
+  if(file){
+    // read file as data URL, then save
+    const reader = new FileReader();
+    reader.onload = function(e){
+      const dataUrl = e.target.result;
+      finalizeSave(dataUrl);
+    };
+    reader.onerror = function(){
+      alert('Failed to read image file.');
+    };
+    reader.readAsDataURL(file);
+  } else {
+    // no image change, just save text fields
+    finalizeSave(null);
+  }
+});
+
+// auto-login if session exists
+window.addEventListener('load', ()=>{
+  const m = localStorage.getItem(SESSION_KEY);
+  if(m){ const s = findStudent(m); if(s) showAppFor(s); }
+});
+
+// small helper escape
+function escapeHtml(s){ return String(s||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+
+
+</script>
+
+</body>
+</html>
+
+
+
