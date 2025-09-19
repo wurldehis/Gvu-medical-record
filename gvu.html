@@ -292,9 +292,8 @@ const student = findStudent(matric);
 if(!student) return alert('Invalid credentials');
 
 // ✅ Allow DOB or new password
-if(student.dob !== password) return alert('Invalid credentials');
-
-  localStorage.setItem(SESSION_KEY, student.matric);
+if(password !== student.dob) { return alert('Invalid credentials');}
+ localStorage.setItem(SESSION_KEY, student.matric);
   showAppFor(student);
 });
 
@@ -322,7 +321,7 @@ function renderStudent(s){
     `${s.matric}${s.contact ? ' • ' + s.contact : ''}`;
   document.getElementById('cardName').textContent = s.first + ' ' + s.last;
   document.getElementById('cardMatric').textContent = s.matric;
-}
+
 
   // avatar handling: override both profileAvatar and navLogo if avatar exists
   const avatarEl = document.getElementById('profileAvatar');
@@ -384,7 +383,7 @@ function renderStudent(s){
   ];
   document.getElementById('healthTip').textContent = tips[Math.floor(Math.random()*tips.length)];
 
-
+}
 function openVisitModal(matric,date){
   const s = findStudent(matric);
   if(!s) return alert('No record');
