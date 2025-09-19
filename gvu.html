@@ -58,10 +58,11 @@
         <label class="form-label small">Matric Number</label>
         <input id="loginMatric" class="form-control" placeholder="GVU/2024/001" />
       </div>
-      <div class="mb-2">
-        <label class="form-label small">Date of Birth (password)</label>
-        <input id="loginDob" type="date" class="form-control" />
-      </div>
+     <div class="mb-2">
+  <label class="form-label small">Password</label>
+  <input id="loginPassword" type="password" class="form-control" placeholder="DOB (YYYY-MM-DD) or new password" />
+</div>
+
       <div class="d-grid gap-2 mt-2">
         <button id="btnLogin" class="btn btn-primary">Login</button>
         <button id="btnHelp" class="btn btn-link">Need help?</button>
@@ -270,7 +271,8 @@ btnRegister.addEventListener('click', ()=>{
   const last = document.getElementById('regLast').value.trim();
   const dob = document.getElementById('regDob').value;
   const contact = document.getElementById('regContact').value.trim();
-  if(!matric || !first || !last || !dob) return alert('Please fill required fields');
+ if(!matric || !first || !last || !dob || !contact) {
+    return alert('Please fill all required fields, including contact');}
   const arr = getStudents();
   if(arr.find(x=>x.matric.toLowerCase()===matric.toLowerCase())) return alert('Matric already registered');
   arr.push({matric,first,last,dob,contact,visits:[],notes:'',createdAt:new Date().toISOString(), avatar: null});
@@ -284,10 +286,14 @@ btnRegister.addEventListener('click', ()=>{
 
 btnLogin.addEventListener('click', ()=>{
   const matric = document.getElementById('loginMatric').value.trim();
-  const dob = document.getElementById('loginDob').value;
-  if(!matric || !dob) return alert('Enter matric and DOB');
-  const student = findStudent(matric);
-  if(!student || student.dob !== dob) return alert('Invalid credentials');
+const password = document.getElementById('loginPassword').value.trim();
+if(!matric || !password) return alert('Enter matric and password');
+const student = findStudent(matric);
+if(!student) return alert('Invalid credentials');
+
+// ✅ Allow DOB or new password
+if(student.dob !== password) return alert('Invalid credentials');
+
   localStorage.setItem(SESSION_KEY, student.matric);
   showAppFor(student);
 });
@@ -312,9 +318,11 @@ function showAppFor(student){
 function renderStudent(s){
   // name/meta
   document.getElementById('studentName').textContent = s.first + ' ' + s.last;
-  document.getElementById('studentMeta').textContent = `${s.matric} • DOB: ${s.dob}${s.contact? ' • '+s.contact:''}`;
+  document.getElementById('studentMeta').textContent = 
+    `${s.matric}${s.contact ? ' • ' + s.contact : ''}`;
   document.getElementById('cardName').textContent = s.first + ' ' + s.last;
   document.getElementById('cardMatric').textContent = s.matric;
+}
 
   // avatar handling: override both profileAvatar and navLogo if avatar exists
   const avatarEl = document.getElementById('profileAvatar');
@@ -375,7 +383,7 @@ function renderStudent(s){
     "Keep your vaccinations up to date."
   ];
   document.getElementById('healthTip').textContent = tips[Math.floor(Math.random()*tips.length)];
-}
+
 
 function openVisitModal(matric,date){
   const s = findStudent(matric);
