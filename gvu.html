@@ -1,487 +1,447 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>GVU Medical Records — Student</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    :root{--brand:#0b74d1;--muted:#6c757d}
-    body{font-family:Inter,system-ui,Arial;margin:0;padding-top:76px;background:linear-gradient(180deg,#eef8ff 0,#fff 70%)}
-    .logo{height:100px;width:100px;border-radius:8px;object-fit:cover}
-    .auth-card{max-width:520px;margin:28px auto;padding:22px;border-radius:12px;background:#fff;box-shadow:0 8px 30px rgba(2,12,34,.06)}
-    .panel{background:#fff;border-radius:12px;padding:16px;box-shadow:0 8px 24px rgba(2,12,34,.05)}
-    .prescription-badge{display:inline-block;margin:.15rem .2rem;padding:.28rem .5rem;border-radius:999px;background:#e9ecef;font-size:.85rem}
-    .tip-badge{background:#f0f9ff;border-left:4px solid var(--brand);padding:.75rem;border-radius:8px}
-    .small-muted{font-size:.88rem;color:var(--muted)}
-    .carousel-svg{width:100%;height:220px;object-fit:cover;border-radius:10px}
-    @media (max-width:767px){ .carousel-svg{height:160px} body{padding-top:90px} .logo{height:72px;width:72px} }
-    /* make navbar logo smaller on mobile */
-    .navbar .logo{ height:72px; width:72px; }
-    @media (max-width:576px){ .navbar .logo{height:56px;width:56px} }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>GVU Medical Records — Student Portal</title>
+    <link rel="icon" type="image/x-icon" href="/gvu logo.jpg" sizes="32x32">
+    <link rel="apple-touch-icon" href="/gvu logo.jpg" sizes="180x180">
+    <link rel="icon" type="image/png" href="/gvu logo.jpg" sizes="192x192">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2196F3;
+            --secondary: #4CAF50;
+            --accent: #FF9800;
+            --bg: linear-gradient(135deg, #E3F2FD 0%, #F3E5F5 100%);
+            --card: rgba(255, 255, 255, 0.95);
+            --text: #1a1a1a;
+            --muted: #757575;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background: var(--bg), url('/background\ logo.jpg') no-repeat center/cover fixed;
+            color: var(--text);
+            position: relative;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: -1;
+        }
+        header {
+            background: linear-gradient(90deg, var(--primary), #1976D2);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: white;
+            box-shadow: var(--shadow);
+            animation: slideDown 0.6s ease-out;
+        }
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .logo {
+            width: 60px; height: 60px; border-radius: 12px; object-fit: cover; background: white; padding: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .header-text { font-weight: 500; }
+        .header-subtitle { font-size: 0.9rem; opacity: 0.9; }
+        .container {
+            max-width: 900px; margin: 32px auto; padding: 0 16px;
+        }
+        .card {
+            background: var(--card); padding: 24px; border-radius: 16px; box-shadow: var(--shadow);
+            margin-bottom: 24px; opacity: 0; transform: translateY(20px);
+            animation: fadeUp 0.8s ease-out forwards;
+        }
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        h2, h3 { margin: 0 0 16px; font-weight: 400; color: var(--text); }
+        label { display: block; font-size: 0.95rem; color: var(--muted); margin: 12px 0 6px; font-weight: 300; }
+        input, button, select, textarea {
+            font-family: inherit; width: 100%; padding: 12px 16px; border-radius: 10px; border: 2px solid #e0e0e0;
+            box-sizing: border-box; transition: all 0.3s ease;
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1); }
+        button { background: linear-gradient(90deg, var(--secondary), #45a049); color: white; border: none; cursor: pointer; font-weight: 500;
+            transition: transform 0.2s ease, box-shadow 0.2s ease; margin: 8px 0;
+        }
+        button:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3); }
+        .linklike { background: none; border: none; color: var(--primary); cursor: pointer; padding: 0; font-size: 0.95rem; text-decoration: underline; }
+        .linklike:hover { color: #1976D2; }
+        .row { display: flex; gap: 16px; flex-wrap: wrap; }
+        .col { flex: 1; min-width: 200px; }
+        .tips { text-align: center; padding: 20px; background: linear-gradient(180deg, #e8f5e8, white); border-radius: 12px; font-weight: 400;
+            min-height: 80px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;
+        }
+        .tips::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 3s infinite; }
+        @keyframes shimmer { 0% { left: -100%; } 100% { left: 100%; } }
+        .visits { max-height: 400px; overflow-y: auto; }
+        .visit-item { background: #f9f9f9; padding: 16px; border-radius: 10px; margin-bottom: 12px; border-left: 4px solid var(--secondary); transition: all 0.3s ease; }
+        .visit-item:hover { transform: translateX(4px); box-shadow: var(--shadow); }
+        .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+        .muted { color: var(--muted); font-size: 0.9rem; }
+        #app { display: none; animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .loading { text-align: center; color: var(--muted); }
+        @media (max-width: 768px) { .row { flex-direction: column; } header { padding: 12px 16px; flex-direction: column; text-align: center; gap: 8px; } }
+    </style>
 </head>
 <body>
+    <header>
+        <img class="logo" src="gvu logo.jpg" alt="GVU Logo" onerror="this.style.display='none'">
+        <div class="header-text">GVU Medical Records</div>
+        <div class="header-subtitle">Student Portal</div>
+        <div style="margin-left:auto">
+            <button id="btnLogout" style="display:none;background:white;color:var(--primary);padding:8px 16px;border-radius:8px;font-weight:500">Logout</button>
+        </div>
+    </header>
 
-<nav class="navbar fixed-top navbar-expand-lg" style="background:linear-gradient(90deg,var(--brand),#0b94e0);">
-  <div class="container-fluid">
-    <div class="d-flex align-items-center gap-3">
-      <img id="navLogo" src="WhatsApp Image 2025-09-10 at 12.08.49_f0d52896.jpg" alt="Logo" class="logo" onerror="this.style.display='none'"/>
-      <div class="d-none d-sm-block text-white">
-        <div style="font-weight:700">GVU Medical Records</div>
-        <div style="font-size:.85rem;opacity:.95">Student Portal</div>
-      </div>
-    </div>
-    <div class="ms-auto me-3 d-flex align-items-center gap-2">
-      <div id="navUser" style="color:#fff;display:none;font-weight:600"></div>
-      <button id="btnLogout" class="btn btn-outline-light btn-sm" style="display:none">Logout</button>
-    </div>
-  </div>
-</nav>
-
-<!-- AUTH -->
-<div class="auth-card" id="authBox">
-  <div class="text-center mb-2">
-    <h4 style="margin-bottom:2px">Student Portal</h4>
-    <div class="small-muted">Register with your Matric number. Use DOB (YYYY-MM-DD) to login.</div>
-  </div>
-
-  <ul class="nav nav-pills nav-justified mb-3" role="tablist">
-    <li class="nav-item"><button class="nav-link active" data-bs-target="#loginTab" data-bs-toggle="pill" type="button">Login</button></li>
-    <li class="nav-item"><button class="nav-link" data-bs-target="#registerTab" data-bs-toggle="pill" type="button">Register</button></li>
-  </ul>
-
-  <div class="tab-content">
-    <!-- LOGIN -->
-    <div id="loginTab" class="tab-pane fade show active">
-      <div class="mb-2">
-        <label class="form-label small">Matric Number</label>
-        <input id="loginMatric" class="form-control" placeholder="GVU/2024/001" />
-      </div>
-     <div class="mb-2">
-  <label class="form-label small">Password</label>
-  <input id="loginPassword" type="password" class="form-control" placeholder="DOB (YYYY-MM-DD) or new password" />
-</div>
-
-      <div class="d-grid gap-2 mt-2">
-        <button id="btnLogin" class="btn btn-primary">Login</button>
-        <button id="btnHelp" class="btn btn-link">Need help?</button>
-      </div>
-    </div>
-
-    <!-- REGISTER -->
-    <div id="registerTab" class="tab-pane fade">
-      <div class="mb-2"><label class="form-label small">Matric Number</label><input id="regMatric" class="form-control" placeholder="GVU/2024/001"></div>
-      <div class="row g-2">
-        <div class="col-6"><label class="form-label small">First name</label><input id="regFirst" class="form-control"></div>
-        <div class="col-6"><label class="form-label small">Last name</label><input id="regLast" class="form-control"></div>
-      </div>
-      <div class="row g-2 mt-2">
-        <div class="col-md-6"><label class="form-label small">Date of Birth</label><input id="regDob" type="date" class="form-control"></div>
-        <div class="col-md-6"><label class="form-label small">Contact</label><input id="regContact" class="form-control"></div>
-      </div>
-      <div class="d-grid mt-3"><button id="btnRegister" class="btn btn-success">Create account</button></div>
-      <div class="small-muted mt-2">DOB will be used as your initial password (YYYY-MM-DD).</div>
-    </div>
-  </div>
-</div>
-
-<!-- APP -->
-<main class="container mt-3" id="app" style="display:none;max-width:1100px">
-  <div class="row g-3">
-    <div class="col-lg-8">
-      <div class="panel mb-3">
-        <div class="d-flex justify-content-between align-items-start">
-          <div>
-            <h5 id="cardTitle">Welcome, <span id="studentName">Student</span></h5>
-            <div id="studentMeta" class="small-muted">GVU / Matric</div>
-          </div>
-          <div class="text-end">
-            <div class="small-muted">Total visits</div>
-            <div style="font-weight:700;font-size:1.25rem" id="totalVisits">0</div>
-            <div class="mt-2">
-              <button id="btnEdit" class="btn btn-outline-secondary btn-sm">Edit Profile</button>
+    <div class="container">
+        <div id="authCard" class="card">
+            <h2>Welcome to Student Portal</h2>
+            <div id="authForms">
+                <div id="loginForm">
+                    <label for="loginEmail">Email</label>
+                    <input id="loginEmail" type="email" placeholder="you@example.com">
+                    <label for="loginPassword">Password</label>
+                    <input id="loginPassword" type="password" placeholder="password">
+                    <div class="actions">
+                        <button id="btnLogin">Login</button>
+                        <button id="showRegister" class="linklike">Create account</button>
+                        <button id="showReset" class="linklike">Forgot password?</button>
+                    </div>
+                    <div id="loginMsg" class="muted"></div>
+                </div>
+                <div id="registerForm" style="display:none">
+                    <label for="regEmail">Email</label>
+                    <input id="regEmail" type="email">
+                    <div class="row">
+                        <div class="col"><label for="regFirst">First Name</label><input id="regFirst"></div>
+                        <div class="col"><label for="regLast">Last Name</label><input id="regLast"></div>
+                    </div>
+                    <label for="regMatric">Matric Number</label>
+                    <input id="regMatric" placeholder="GVU/2024/001">
+                    <label for="regPassword">Password</label>
+                    <input id="regPassword" type="password" placeholder="choose a secure password">
+                    <div class="actions">
+                        <button id="btnRegister">Register</button>
+                        <button id="cancelRegister" class="linklike">Back to login</button>
+                    </div>
+                    <div id="regMsg" class="muted"></div>
+                </div>
+                <div id="resetForm" style="display:none">
+                    <label for="resetEmail">Email (for reset link)</label>
+                    <input id="resetEmail" type="email" placeholder="Enter your email">
+                    <div class="actions">
+                        <button id="btnReset">Send reset email</button>
+                        <button id="cancelReset" class="linklike">Back to login</button>
+                    </div>
+                    <div id="resetMsg" class="muted"></div>
+                </div>
             </div>
-          </div>
         </div>
 
-        <hr/>
-
-        <div id="homeCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
-          <div class="carousel-inner">
-            <div class="carousel-item active">
-              <img class="d-block w-100 carousel-svg" src="data:image/svg+xml;utf8,
-                <svg xmlns='http://www.w3.org/2000/svg' width='1200' height='400'>
-                  <rect width='100%' height='100%' fill='%230b74d1'/>
-                  <text x='50%' y='45%' font-size='36' fill='white' text-anchor='middle' font-family='Arial'>Stay Hydrated — Drink Water</text>
-                  <text x='50%' y='60%' font-size='20' fill='white' text-anchor='middle' font-family='Arial'>Keep your body and mind sharp</text>
-                </svg>" alt="Slide 1">
+        <div id="app">
+            <div class="card row" style="align-items:center;justify-content:space-between">
+                <div style="display:flex;gap:16px;align-items:center;flex:1">
+                    <div style="background:var(--primary);width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:1.5rem">👤</div>
+                    <div>
+                        <h3 id="studentName">Student Name</h3>
+                        <div class="muted" id="studentEmail">email</div>
+                        <div class="muted" id="studentMatric">GVU/XXXX</div>
+                    </div>
+                </div>
+                <div style="text-align:right">
+                    <div class="muted">Total Visits</div>
+                    <div id="totalVisits" style="font-size:2rem;font-weight:700;color:var(--secondary)">0</div>
+                </div>
             </div>
-            <div class="carousel-item">
-              <img class="d-block w-100 carousel-svg" src="data:image/svg+xml;utf8,
-                <svg xmlns='http://www.w3.org/2000/svg' width='1200' height='400'>
-                  <rect width='100%' height='100%' fill='%2333a02c'/>
-                  <text x='50%' y='48%' font-size='34' fill='white' text-anchor='middle' font-family='Arial'>Move More — 30 min Exercise</text>
-                  <text x='50%' y='62%' font-size='18' fill='white' text-anchor='middle' font-family='Arial'>A short walk is a great start</text>
-                </svg>" alt="Slide 2">
+
+            <div class="card">
+                <h3>Daily Health Tips</h3>
+                <div class="tips" id="tipsCarousel">Loading tips...</div>
             </div>
-            <div class="carousel-item">
-              <img class="d-block w-100 carousel-svg" src="data:image/svg+xml;utf8,
-                <svg xmlns='http://www.w3.org/2000/svg' width='1200' height='400'>
-                  <rect width='100%' height='100%' fill='%23ff7f0e'/>
-                  <text x='50%' y='48%' font-size='34' fill='white' text-anchor='middle' font-family='Arial'>Healthy Eating Tips</text>
-                  <text x='50%' y='62%' font-size='18' fill='white' text-anchor='middle' font-family='Arial'>Fruit, veg, and whole grains</text>
-                </svg>" alt="Slide 3">
+
+            <div class="card">
+                <h3>Your Visit History & Prescriptions</h3>
+                <div id="visitsList" class="visits">
+                    <div class="loading">Loading visits...</div>
+                </div>
             </div>
-          </div>
-          <button class="carousel-control-prev" type="button" data-bs-target="#homeCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#homeCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-          </button>
-        </div>
 
-        <h6>Visit history</h6>
-        <div id="visitsList" class="mb-2"></div>
-      </div>
+            <div id="editPanel" class="card" style="display:none">
+                <h3>Edit Profile</h3>
+                <label for="editFirst">First Name</label>
+                <input id="editFirst">
+                <label for="editLast">Last Name</label>
+                <input id="editLast">
+                <label for="editContact">Contact</label>
+                <input id="editContact" placeholder="Phone or other contact">
+                <label for="currentPassword">Current Password (required for changes)</label>
+                <input id="currentPassword" type="password" placeholder="current password">
+                <label for="newPassword">New Password (optional)</label>
+                <input id="newPassword" type="password" placeholder="new password">
+                <div class="actions">
+                    <button id="btnSaveProfile">Save Changes</button>
+                    <button id="btnCancelEdit" class="linklike">Cancel</button>
+                </div>
+                <div id="editMsg" class="muted"></div>
+            </div>
+        </div>
     </div>
 
-    <div class="col-lg-4">
-      <div class="panel mb-3 text-center">
-        <img id="profileAvatar" src="data:image/svg+xml;utf8,
-          <svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><rect rx='16' width='100%' height='100%' fill='%23ffffff' stroke='%23000000' stroke-opacity='0.04'/><text x='50%' y='55%' font-size='28' text-anchor='middle' fill='%230b74d1' font-family='Arial'>GVU</text></svg>" style="width:96px;height:96px;border-radius:12px;margin-bottom:12px" alt="avatar">
-        <h5 id="cardName">Student Name</h5>
-        <div id="cardMatric" class="small-muted">GVU/XXXX/XXX</div>
-        <div class="mt-3">
-          <button id="btnViewPres" class="btn btn-sm btn-primary">View Prescriptions</button>
-        </div>
-      </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import {
+            getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+            sendPasswordResetEmail, signOut, onAuthStateChanged, reauthenticateWithCredential,
+            EmailAuthProvider, updatePassword
+        } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+        import {
+            getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot
+        } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
-      <div class="panel mb-3">
-        <h6>Health Tip</h6>
-        <div id="healthTip" class="tip-badge"></div>
-      </div>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAoijzN2PvUTtQn1jVjALBStXup-Xfmv9Q",
+            authDomain: "gvu-medical-records.firebaseapp.com",
+            projectId: "gvu-medical-records",
+            storageBucket: "gvu-medical-records.firebasestorage.app",
+            messagingSenderId: "550094376325",
+            appId: "1:550094376325:web:530ed47e06da48791c88ec"
+        };
 
-      <div class="panel">
-        <h6>Quick Summary</h6>
-        <div class="d-flex justify-content-between align-items-center">
-          <div class="small-muted">Total visits</div>
-          <div id="summaryVisits" style="font-weight:700">0</div>
-        </div>
-        <div class="d-flex justify-content-between align-items-center mt-2">
-          <div class="small-muted">Latest prescription</div>
-          <div id="summaryRx" class="small-muted">—</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</main>
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-<!-- Modal: prescriptions / visit detail -->
-<div class="modal fade" id="rxModal" tabindex="-1">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header"><h5 class="modal-title">Details</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
-      <div class="modal-body" id="rxModalBody"></div>
-    </div>
-  </div>
-</div>
-<!-- Edit Profile Modal -->
-<div class="modal fade" id="editModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Edit Profile</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <!-- Avatar preview + upload -->
-        <div class="text-center mb-2">
-          <img id="editAvatarPreview" src="" alt="avatar preview"
-            style="width:96px;height:96px;border-radius:12px;object-fit:cover;margin-bottom:8px" />
-        </div>
-        <div class="mb-2">
-          <label class="form-label small">Change profile photo</label>
-          <input id="editAvatarInput" type="file" accept="image/*"
-            class="form-control form-control-sm" />
-        </div>
+        const $ = id => document.getElementById(id);
+        function escapeHtml(s) { return String(s || "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;"); }
 
-        <div class="mb-2"><label class="form-label small">First name</label><input id="editFirst" class="form-control"></div>
-        <div class="mb-2"><label class="form-label small">Last name</label><input id="editLast" class="form-control"></div>
-        <div class="mb-2"><label class="form-label small">Contact</label><input id="editContact" class="form-control"></div>
+        const loginForm = $("loginForm"), registerForm = $("registerForm"), resetForm = $("resetForm");
+        const authCard = $("authCard"), appCard = $("app");
+        const btnLogout = $("btnLogout"), btnLogin = $("btnLogin"), btnRegister = $("btnRegister");
+        const showRegister = $("showRegister"), cancelRegister = $("cancelRegister");
+        const showReset = $("showReset"), cancelReset = $("cancelReset");
+        const loginMsg = $("loginMsg"), regMsg = $("regMsg"), resetMsg = $("resetMsg");
+        const visitsList = $("visitsList");
 
-        <!-- 🔥 New password -->
-        <div class="mb-2">
-          <label class="form-label small">New Password</label>
-          <div class="input-group">
-            <input id="editPassword" type="password" class="form-control"
-              placeholder="Leave blank to keep current password">
-            <button class="btn btn-outline-secondary" type="button" id="togglePassword">👁</button>
-          </div>
-        </div>
+        const tips = [
+            "Drink 8 glasses of water daily to stay hydrated.",
+            "Get 7-8 hours of sleep for better health.",
+            "Exercise 30 minutes daily to stay active.",
+            "Eat fruits and vegetables for a balanced diet.",
+            "Wash hands regularly to prevent infections.",
+            "Consult a doctor before taking any medication.",
+            "Take screen breaks to reduce eye strain.",
+            "Maintain good posture to avoid back pain."
+        ];
+        let tipIndex = 0;
+        function tickTip() {
+            const tipsEl = $("tipsCarousel");
+            tipsEl.style.opacity = '0';
+            setTimeout(() => {
+                tipsEl.textContent = tips[tipIndex];
+                tipsEl.style.opacity = '1';
+                tipIndex = (tipIndex + 1) % tips.length;
+            }, 200);
+        }
+        tickTip();
+        setInterval(tickTip, 4000);
 
-        <!-- Confirm password -->
-        <div class="mb-3">
-          <label for="confirmPassword" class="form-label small">Confirm Password</label>
-          <input type="password" class="form-control" id="confirmPassword">
-        </div>
+        showRegister.addEventListener("click", () => {
+            loginForm.style.display = "none"; registerForm.style.display = "block"; resetForm.style.display = "none";
+        });
+        cancelRegister.addEventListener("click", () => {
+            loginForm.style.display = "block"; registerForm.style.display = "none"; resetForm.style.display = "none";
+        });
+        showReset.addEventListener("click", () => {
+            loginForm.style.display = "none"; registerForm.style.display = "none"; resetForm.style.display = "block";
+        });
+        cancelReset.addEventListener("click", () => {
+            loginForm.style.display = "block"; registerForm.style.display = "none"; resetForm.style.display = "none";
+        });
 
-        <div class="d-grid">
-          <button id="saveEdit" class="btn btn-primary">Save</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+        btnRegister.addEventListener("click", async () => {
+            regMsg.textContent = "";
+            const email = $("regEmail").value.trim();
+            const first = $("regFirst").value.trim();
+            const last = $("regLast").value.trim();
+            const matric = $("regMatric").value.trim();
+            const password = $("regPassword").value;
+            if (!email || !first || !last || !matric || !password) {
+                regMsg.textContent = "Please fill all required fields";
+                return;
+            }
+            try {
+                const cred = await createUserWithEmailAndPassword(auth, email, password);
+                const uid = cred.user.uid;
+                await setDoc(doc(db, "students", uid), {
+                    uid, email, first, last, matric, contact: "", visits: [], createdAt: new Date().toISOString()
+                });
+                regMsg.textContent = "Account created successfully! Redirecting...";
+                setTimeout(() => location.reload(), 1500);
+            } catch (err) {
+                console.error(err);
+                regMsg.textContent = "Error: " + (err.message || err.code);
+                regMsg.style.color = 'red';
+            }
+        });
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        btnLogin.addEventListener("click", async () => {
+            loginMsg.textContent = "";
+            const email = $("loginEmail").value.trim();
+            const pass = $("loginPassword").value;
+            if (!email || !pass) {
+                loginMsg.textContent = "Please enter email and password";
+                return;
+            }
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+                loginMsg.textContent = "Logging in...";
+            } catch (err) {
+                console.error(err);
+                loginMsg.textContent = "Login failed: " + (err.message || err.code);
+                loginMsg.style.color = 'red';
+            }
+        });
 
+        $("btnReset").addEventListener("click", async () => {
+            resetMsg.textContent = "";
+            const email = $("resetEmail").value.trim();
+            if (!email) {
+                resetMsg.textContent = "Please enter your email";
+                return;
+            }
+            try {
+                await sendPasswordResetEmail(auth, email);
+                resetMsg.textContent = "Reset email sent. Check your inbox.";
+                resetMsg.style.color = 'green';
+            } catch (err) {
+                resetMsg.textContent = "Failed: " + (err.message || err.code);
+                resetMsg.style.color = 'red';
+            }
+        });
 
-<script>
-/*
-  Student portal connected to admin via localStorage keys:
-    - gvu_students: array of students {matric,first,last,dob,contact,visits:[],notes,createdAt, avatar}
-    - gvu_session_student: matric (string)
-  This file: USING YOUR ORIGINAL CODE, only added avatar upload & functional edit-save that persists avatar & profile.
-*/
+        onAuthStateChanged(auth, async user => {
+            if (user) {
+                try {
+                    visitsList.innerHTML = '<div class="loading">Loading profile...</div>';
+                    const snap = await getDoc(doc(db, "students", user.uid));
+                    if (snap.exists()) {
+                        showApp(snap.data(), user.uid);
+                    } else {
+                        await setDoc(doc(db, "students", user.uid), {
+                            uid: user.uid, email: user.email, first: "", last: "", matric: "", contact: "", visits: [], createdAt: new Date().toISOString()
+                        });
+                        const snap2 = await getDoc(doc(db, "students", user.uid));
+                        showApp(snap2.data(), user.uid);
+                    }
+                } catch (err) {
+                    console.error("Failed to load profile", err);
+                    visitsList.innerHTML = '<div class="muted">Error loading profile. <button onclick="location.reload()" class="linklike">Retry</button></div>';
+                }
+            } else {
+                authCard.style.display = "block";
+                appCard.style.display = "none";
+                btnLogout.style.display = "none";
+                loginForm.style.display = "block";
+                registerForm.style.display = "none";
+                resetForm.style.display = "none";
+            }
+        });
 
-const STUD_KEY = 'gvu_students';
-const SESSION_KEY = 'gvu_session_student';
+        async function showApp(studentData, uid) {
+            authCard.style.display = "none";
+            appCard.style.display = "block";
+            btnLogout.style.display = "block";
+            $("studentName").textContent = (studentData.first || "") + " " + (studentData.last || "");
+            $("studentEmail").textContent = studentData.email || "";
+            $("studentMatric").textContent = studentData.matric || "";
+            $("totalVisits").textContent = (studentData.visits || []).length;
+            renderVisits(studentData.visits || []);
+            $("editFirst").value = studentData.first || "";
+            $("editLast").value = studentData.last || "";
+            $("editContact").value = studentData.contact || "";
+            onSnapshot(doc(db, "students", uid), snap => {
+                if (!snap.exists()) return;
+                const d = snap.data();
+                $("studentName").textContent = (d.first || "") + " " + (d.last || "");
+                $("studentMatric").textContent = d.matric || "";
+                $("totalVisits").textContent = (d.visits || []).length;
+                renderVisits(d.visits || []);
+            });
+        }
 
-function lsGet(k){ try { return JSON.parse(localStorage.getItem(k)||'null'); } catch { return null; } }
-function lsSet(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
-function ensureDefault(){ if(!lsGet(STUD_KEY)) lsSet(STUD_KEY, []); }
-ensureDefault();
+        function renderVisits(visits) {
+            if (!visits || !visits.length) {
+                visitsList.innerHTML = '<div class="muted text-center">No visits recorded yet. Schedule one with the clinic!</div>';
+                return;
+            }
+            visitsList.innerHTML = visits.slice().reverse().map(v => {
+                const pres = (v.prescriptions || []).map(p => `<div class="muted small">${escapeHtml(p)}</div>`).join("");
+                return `<div class="visit-item">
+                    <div><strong>${escapeHtml(v.date || "Recent")}</strong> <span class="muted"> — By ${escapeHtml(v.clinician || "Clinician")}</span></div>
+                    <div class="muted"><em>Diagnosis: ${escapeHtml(v.diagnosis || "General checkup")}</em></div>
+                    <div style="margin-top:8px">${escapeHtml(v.notes || "")}</div>
+                    ${pres ? `<div style="margin-top:12px;border-top:1px solid #e0e0e0;padding-top:8px"><strong>Prescriptions:</strong>${pres}</div>` : ""}
+                </div>`;
+            }).join("");
+        }
 
-function getStudents(){ return lsGet(STUD_KEY) || []; }
-function saveStudents(a){ lsSet(STUD_KEY, a); }
+        btnLogout.addEventListener("click", async () => {
+            await signOut(auth);
+            location.reload();
+        });
 
-function findStudent(matric){ if(!matric) return null; return getStudents().find(s => (s.matric||'').toLowerCase() === matric.toLowerCase()); }
+        $("btnEditProfile").addEventListener("click", () => $("editPanel").style.display = "block");
+        $("btnCancelEdit").addEventListener("click", () => $("editPanel").style.display = "none");
 
-const btnRegister = document.getElementById('btnRegister');
-const btnLogin = document.getElementById('btnLogin');
-const btnLogout = document.getElementById('btnLogout');
+        $("btnSaveProfile").addEventListener("click", async () => {
+            const user = auth.currentUser;
+            if (!user) return alert("Not signed in");
+            const first = $("editFirst").value.trim();
+            const last = $("editLast").value.trim();
+            const contact = $("editContact").value.trim();
+            const currentPass = $("currentPassword").value;
+            const newPass = $("newPassword").value;
+            const update = { first, last, contact };
+            if (newPass) {
+                if (!currentPass) return $("editMsg").textContent = "Enter current password to change password"; $("editMsg").style.color = 'red';
+                try {
+                    const cred = EmailAuthProvider.credential(user.email, currentPass);
+                    await reauthenticateWithCredential(user, cred);
+                    await updatePassword(user, newPass);
+                } catch (err) {
+                    console.error(err);
+                    return $("editMsg").textContent = "Password change failed: " + (err.message || err.code); $("editMsg").style.color = 'red';
+                }
+            }
+            await updateDoc(doc(db, "students", user.uid), update);
+            $("editMsg").textContent = "Profile updated successfully!"; $("editMsg").style.color = 'green';
+            setTimeout(() => { $("editMsg").textContent = ""; $("editPanel").style.display = "none"; }, 2000);
+        });
 
-btnRegister.addEventListener('click', ()=>{
-  const matric = document.getElementById('regMatric').value.trim();
-  const first = document.getElementById('regFirst').value.trim();
-  const last = document.getElementById('regLast').value.trim();
-  const dob = document.getElementById('regDob').value;
-  const contact = document.getElementById('regContact').value.trim();
- if(!matric || !first || !last || !dob || !contact) {
-    return alert('Please fill all required fields, including contact');}
-  const arr = getStudents();
-  if(arr.find(x=>x.matric.toLowerCase()===matric.toLowerCase())) return alert('Matric already registered');
-  arr.push({matric,first,last,dob,contact,visits:[],notes:'',createdAt:new Date().toISOString(), avatar: null});
-  saveStudents(arr);
-  alert('Registered successfully. Login with Matric and DOB.');
-  // reset
-  document.getElementById('regMatric').value=''; document.getElementById('regFirst').value=''; document.getElementById('regLast').value=''; document.getElementById('regDob').value=''; document.getElementById('regContact').value='';
-  // switch to login tab
-  document.querySelector('[data-bs-target="#loginTab"]').click();
-});
-
-btnLogin.addEventListener('click', ()=>{
-  const matric = document.getElementById('loginMatric').value.trim();
-const password = document.getElementById('loginPassword').value.trim();
-if(!matric || !password) return alert('Enter matric and password');
-const student = findStudent(matric);
-if(!student) return alert('Invalid credentials');
-
-// ✅ Allow DOB or new password
-if(password !== student.dob) { return alert('Invalid credentials');}
- localStorage.setItem(SESSION_KEY, student.matric);
-  showAppFor(student);
-});
-
-btnLogout.addEventListener('click', ()=>{
-  localStorage.removeItem(SESSION_KEY);
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('authBox').style.display = '';
-  btnLogout.style.display='none';
-  document.getElementById('navUser').style.display='none';
-});
-
-function showAppFor(student){
-  document.getElementById('authBox').style.display='none';
-  document.getElementById('app').style.display='';
-  btnLogout.style.display='';
-  document.getElementById('navUser').style.display='';
-  document.getElementById('navUser').textContent = `${student.first} ${student.last}`;
-  renderStudent(student);
-}
-
-function renderStudent(s){
-  // name/meta
-  document.getElementById('studentName').textContent = s.first + ' ' + s.last;
-  document.getElementById('studentMeta').textContent = 
-    `${s.matric}${s.contact ? ' • ' + s.contact : ''}`;
-  document.getElementById('cardName').textContent = s.first + ' ' + s.last;
-  document.getElementById('cardMatric').textContent = s.matric;
-
-
-  // avatar handling: override both profileAvatar and navLogo if avatar exists
-  const avatarEl = document.getElementById('profileAvatar');
-  const navLogoEl = document.getElementById('navLogo');
-  const defaultAvatar = avatarEl.getAttribute('data-default') || avatarEl.src;
-  if(s.avatar){
-    avatarEl.src = s.avatar;
-    // show nav logo if hidden and set src
-    try { if(navLogoEl) { navLogoEl.src = s.avatar; navLogoEl.style.display = ''; } } catch(e){}
-  } else {
-    // if no saved avatar, leave whatever navLogo already had (do not hide), set profile to default
-    avatarEl.src = defaultAvatar;
-  }
-
-  // visits / summary
-  const visits = s.visits || [];
-  document.getElementById('totalVisits').textContent = visits.length;
-  document.getElementById('summaryVisits').textContent = visits.length;
-  const latestRx = visits.length ? (visits[visits.length-1].prescriptions||[])[0] : null;
-  document.getElementById('summaryRx').textContent = latestRx ? latestRx.name : '—';
-
-  // visits list (unchanged from your code)
-  const visitsWrap = document.getElementById('visitsList');
-  if(!visits.length) visitsWrap.innerHTML = '<div class="text-muted">No visits recorded</div>';
-  else visitsWrap.innerHTML = visits.slice().reverse().map(v=>{
-    const pres = (v.prescriptions||[]).map(p=>`<span class="prescription-badge">${escapeHtml(p.name)}</span>`).join(' ');
-    return `<div class="card mb-2 p-2">
-      <div class="d-flex justify-content-between">
-        <div><strong>${escapeHtml(v.date||'')}</strong> <div class="small-muted">${escapeHtml(v.clinician||'')}</div></div>
-        <div><button class="btn btn-sm btn-outline-primary view-visit" data-m="${s.matric}" data-date="${escapeHtml(v.date||'')}">View</button></div>
-      </div>
-      <div class="mt-2"><em>${escapeHtml(v.diagnosis||'')}</em></div>
-      <div class="mt-2 small">${escapeHtml(v.notes||'')}</div>
-      ${pres? `<div class="mt-2">Prescriptions: ${pres}</div>` : ''}
-    </div>`;
-  }).join('');
-
-  // bind view visit buttons - keep as in original code
-  setTimeout(()=>{ // slight timeout to ensure buttons are in DOM
-    document.querySelectorAll('.view-visit').forEach(b=>b.addEventListener('click', e=>{
-      const m = e.currentTarget.dataset.m;
-      const date = e.currentTarget.dataset.date;
-      openVisitModal(m,date);
-    }));
-  },50);
-
-  // random health tip (same as you had)
-  const tips = [
-    "Drink at least 8 glasses of water daily.",
-    "Sleep 7–8 hours each night.",
-    "Exercise at least 30 minutes every day.",
-    "Eat more fruits and vegetables.",
-    "Wash your hands regularly.",
-    "Avoid self-medication.",
-    "Take breaks from screens.",
-    "Maintain good posture.",
-    "Manage stress healthily.",
-    "Keep your vaccinations up to date."
-  ];
-  document.getElementById('healthTip').textContent = tips[Math.floor(Math.random()*tips.length)];
-
-}
-function openVisitModal(matric,date){
-  const s = findStudent(matric);
-  if(!s) return alert('No record');
-  const v = s.visits.find(x=>x.date===date);
-  if(!v) return alert('Visit not found');
-  const pres = (v.prescriptions||[]).map(p=>`<span class="prescription-badge">${escapeHtml(p.name)}</span>`).join(' ');
-  const html = `<div><strong>${escapeHtml(v.date)}</strong> — ${escapeHtml(v.clinician||'')}</div>
-    <div class="mt-2"><em>${escapeHtml(v.diagnosis||'')}</em></div>
-    <div class="mt-2 small">${escapeHtml(v.notes||'')}</div>
-    ${pres? '<hr><div>Prescriptions: '+pres+'</div>':''}`;
-  document.getElementById('rxModalBody').innerHTML = html;
-  new bootstrap.Modal(document.getElementById('rxModal')).show();
-}
-
-document.getElementById('btnViewPres').addEventListener('click', ()=>{
-  const m = localStorage.getItem(SESSION_KEY); if(!m) return alert('Not logged in');
-  const s = findStudent(m); if(!s) return;
-  const allPres = (s.visits||[]).flatMap(v=>v.prescriptions||[]);
-  if(!allPres.length){ document.getElementById('rxModalBody').innerHTML = '<div class="text-muted">No prescriptions</div>'; new bootstrap.Modal(document.getElementById('rxModal')).show(); return; }
-  document.getElementById('rxModalBody').innerHTML = allPres.map(p=>`<div class="border-bottom py-2"><strong>${escapeHtml(p.name)}</strong></div>`).join('');
-  new bootstrap.Modal(document.getElementById('rxModal')).show();
-});
-
-// EDIT PROFILE: open modal (prefill) + avatar preview + save
-const editModal = new bootstrap.Modal(document.getElementById('editModal'));
-document.getElementById('btnEdit').addEventListener('click', ()=>{
-  const m = localStorage.getItem(SESSION_KEY); const s = findStudent(m); if(!s) return;
-  document.getElementById('editFirst').value = s.first; document.getElementById('editLast').value = s.last; document.getElementById('editContact').value = s.contact || '';
-  // preview avatar if present
-  const preview = document.getElementById('editAvatarPreview');
-  preview.src = s.avatar || document.getElementById('profileAvatar').src || '';
-  // clear file input
-  document.getElementById('editAvatarInput').value = '';
-  editModal.show();
-});
-
-document.getElementById('saveEdit').addEventListener('click', ()=>{
-  const m = localStorage.getItem(SESSION_KEY); if(!m) return alert('Not logged in');
-  const arr = getStudents(); const i = arr.findIndex(x=>x.matric===m); if(i<0) return alert('Student not found');
-  const first = document.getElementById('editFirst').value.trim();
-  const last = document.getElementById('editLast').value.trim();
-  const contact = document.getElementById('editContact').value.trim();
-  const fileInput = document.getElementById('editAvatarInput');
-  const file = fileInput.files && fileInput.files[0];
-
-  // helper to finalize save (used both sync and async)
-  function finalizeSave(dataURL){
-  if(first) arr[i].first = first;
-  if(last) arr[i].last = last;
-  arr[i].contact = contact;
-
-  // ✅ Password change
-  const newPass = document.getElementById('editPassword').value.trim();
-  if(newPass) arr[i].dob = newPass;
-
-  if(dataURL) arr[i].avatar = dataURL;
-
-  saveStudents(arr);
-  editModal.hide();
-  // refresh UI for this student
-  showAppFor(arr[i]);
-
-  // clear fields
-  fileInput.value = '';
-  document.getElementById('editPassword').value = '';
-}
-
-  if(file){
-    // read file as data URL, then save
-    const reader = new FileReader();
-    reader.onload = function(e){
-      const dataUrl = e.target.result;
-      finalizeSave(dataUrl);
-    };
-    reader.onerror = function(){
-      alert('Failed to read image file.');
-    };
-    reader.readAsDataURL(file);
-  } else {
-    // no image change, just save text fields
-    finalizeSave(null);
-  }
-});
-
-// auto-login if session exists
-window.addEventListener('load', ()=>{
-  const m = localStorage.getItem(SESSION_KEY);
-  if(m){ const s = findStudent(m); if(s) showAppFor(s); }
-});
-
-// small helper escape
-function escapeHtml(s){ return String(s||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
-
-
-</script>
-
+        $("btnViewPres").addEventListener("click", () => {
+            const visits = document.querySelectorAll('.visit-item');
+            if (visits.length === 0) return alert("No prescriptions yet. Check back after a visit!");
+            // Scroll to first visit with prescriptions
+            const firstPres = document.querySelector('.visit-item div[style*="Prescriptions"]');
+            if (firstPres) firstPres.scrollIntoView({ behavior: 'smooth' });
+            else alert("No prescriptions found in history.");
+        });
+    </script>
 </body>
 </html>
-
-
-
