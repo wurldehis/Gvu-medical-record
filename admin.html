@@ -1,13 +1,12 @@
-<!-- admin.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>GVU Medical Records — Admin Portal</title>
-    <link rel="icon" type="image/x-icon" href="/gvu logo.jpg" sizes="32x32">
-    <link rel="apple-touch-icon" href="/gvu logo.jpg" sizes="180x180">
-    <link rel="icon" type="image/png" href="/gvu logo.jpg" sizes="192x192">
+    <link rel="icon" type="image/x-icon" href="/WhatsApp Image 2025-09-10 at 12.08.49_f0d52896.jpg" sizes="32x32">
+    <link rel="apple-touch-icon" href="/WhatsApp Image 2025-09-10 at 12.08.49_f0d52896.jpg" sizes="180x180">
+    <link rel="icon" type="image/png" href="/WhatsApp Image 2025-09-10 at 12.08.49_f0d52896.jpg" sizes="192x192">
     <style>
         :root {
             --primary: #1a73e8;
@@ -23,7 +22,8 @@
         body {
             margin: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            background: url('/background\ logo.jpg') no-repeat center center fixed, linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            background-size: cover;
             color: var(--text);
             position: relative;
             overflow-x: hidden;
@@ -207,7 +207,7 @@
 </head>
 <body>
     <header>
-        <img class="logo" src="gvu logo.jpg" alt="GVU Logo" onerror="this.style.display='none'">
+        <img class="logo" src="/WhatsApp Image 2025-09-10 at 12.08.49_f0d52896.jpg" alt="GVU Logo" onerror="this.style.display='none'">
         <div class="header-text">
             <h1>GVU Medical Records</h1>
             <p>Admin Dashboard</p>
@@ -221,7 +221,7 @@
             <div id="authForms">
                 <div id="loginForm">
                     <label for="loginEmail">Email</label>
-                    <input id="loginEmail" type="email" placeholder="admin@example.com">
+                    <input id="loginEmail" type="email" placeholder="wurldadmin@school.com">
                     <label for="loginPassword">Password</label>
                     <input id="loginPassword" type="password" placeholder="password">
                     <div class="actions">
@@ -232,7 +232,7 @@
                 </div>
                 <div id="resetForm" style="display:none">
                     <label for="resetEmail">Email</label>
-                    <input id="resetEmail" type="email" placeholder="Enter your email">
+                    <input id="resetEmail" type="email" placeholder="wurldadmin@school.com">
                     <div class="actions">
                         <button id="btnReset">Send reset email</button>
                         <button id="cancelReset" class="linklike">Back to login</button>
@@ -340,7 +340,7 @@
             getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, signOut, onAuthStateChanged, createUserWithEmailAndPassword
         } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
         import {
-            getFirestore, collection, doc, setDoc, updateDoc, arrayUnion, deleteDoc, onSnapshot, query, where
+            getFirestore, collection, doc, setDoc, updateDoc, arrayUnion, deleteDoc, onSnapshot
         } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -383,7 +383,7 @@
                 return;
             }
             try {
-                const cred = await signInWithEmailAndPassword(auth, email, pass);
+                await signInWithEmailAndPassword(auth, email, pass);
                 loginMsg.textContent = "";
             } catch (err) {
                 console.error(err);
@@ -408,27 +408,32 @@
 
         onAuthStateChanged(auth, async user => {
             if (user) {
-              const idTokenResult = await user.getIdTokenResult();
-              if (idTokenResult.claims.role === 'admin') {
-                authCard.style.display = "none";
-                appCard.style.display = "";
-                btnLogout.style.display = "";
-                loadDashboard();
-              } else {
-                await signOut(auth);
+                try {
+                    const idTokenResult = await user.getIdTokenResult(true); // Force token refresh
+                    if (idTokenResult.claims.role === 'admin') {
+                        authCard.style.display = "none";
+                        appCard.style.display = "";
+                        btnLogout.style.display = "";
+                        loadDashboard();
+                    } else {
+                        await signOut(auth);
+                        authCard.style.display = "";
+                        appCard.style.display = "none";
+                        btnLogout.style.display = "none";
+                        loginForm.style.display = "block";
+                        resetForm.style.display = "none";
+                        loginMsg.textContent = "Not an admin account";
+                    }
+                } catch (err) {
+                    console.error('Token error:', err);
+                    loginMsg.textContent = "Error verifying admin status: " + err.message;
+                }
+            } else {
                 authCard.style.display = "";
                 appCard.style.display = "none";
                 btnLogout.style.display = "none";
                 loginForm.style.display = "block";
                 resetForm.style.display = "none";
-                loginMsg.textContent = "Not an admin account";
-              }
-            } else {
-              authCard.style.display = "";
-              appCard.style.display = "none";
-              btnLogout.style.display = "none";
-              loginForm.style.display = "block";
-              resetForm.style.display = "none";
             }
         });
 
@@ -497,15 +502,18 @@
                 $("totalVisits").textContent = totalVisits;
                 $("todayVisits").textContent = todayVisits;
 
-                // Attach event listeners
                 document.querySelectorAll(".add-visit").forEach(btn => {
                     btn.addEventListener("click", () => openAddVisit(btn.dataset.uid, btn.dataset.name));
                 });
                 document.querySelectorAll(".delete-student").forEach(btn => {
                     btn.addEventListener("click", () => deleteStudent(btn.dataset.uid));
                 });
+            }, err => {
+                console.error('Firestore error:', err);
+                $("addMsg").textContent = "Error loading students: " + err.message;
             });
         }
+
         async function deleteStudent(uid) {
             if (!confirm("Delete this student? This is irreversible!")) return;
             try {
@@ -515,6 +523,7 @@
                 alert("Delete failed: " + err.message);
             }
         }
+
         function openAddVisit(uid, name) {
             $("visitStudentName").textContent = name;
             $("addVisitPanel").dataset.uid = uid;

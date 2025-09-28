@@ -1,7 +1,5 @@
 const admin = require('firebase-admin');
-
-// Reference the service account key file
-const serviceAccount = require('./gvu-medical-records-firebase-adminsdk.json');
+const serviceAccount = require('./gvu-medical-records-firebase-adminsdk-fbsvc-d8166f0995.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
@@ -17,5 +15,4 @@ async function setAdminClaim(email) {
   }
 }
 
-// Replace with your admin email
-setAdminClaim('admin@school.com');
+setAdminClaim('wurldadmin@school.com');
